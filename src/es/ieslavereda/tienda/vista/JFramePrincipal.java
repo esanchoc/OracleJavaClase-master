@@ -24,12 +24,13 @@ import java.awt.Toolkit;
 public class JFramePrincipal extends JFrame {
 
 	private JPanel contentPane;
-	public JButton btnListClients;
+	private JButton btnListClients;
 	public JDesktopPane desktopPane;
-	public JButton btnUsers;
-	public JButton btnLogin;
-	public JButton btnSalir;
-	public JButton btnReport;
+	private JButton btnUsers;
+	private JButton btnLogin;
+	private JButton btnSalir;
+	private JButton btnReport;
+	private JButton btnCategories;
 
 	/**
 	 * Create the frame.
@@ -38,6 +39,7 @@ public class JFramePrincipal extends JFrame {
 		setIconImage(Toolkit.getDefaultToolkit().getImage(JFramePrincipal.class.getResource("/es/ieslavereda/tienda/images/logo_compacto.png")));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1006, 652);
+		setExtendedState(JFrame.MAXIMIZED_BOTH);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(new BorderLayout(0, 0));
@@ -48,30 +50,59 @@ public class JFramePrincipal extends JFrame {
 		contentPane.add(toolBar, BorderLayout.NORTH);
 		
 		btnLogin = new JButton("Login");
-		btnLogin.setIcon(new ImageIcon(JFramePrincipal.class.getResource("/es/ieslavereda/tienda/images/login.png")));
-		toolBar.add(btnLogin);
+		getBtnLogin().setIcon(new ImageIcon(JFramePrincipal.class.getResource("/es/ieslavereda/tienda/images/login.png")));
+		toolBar.add(getBtnLogin());
 		
 		btnUsers = new JButton("Users");
-		btnUsers.setEnabled(false);
-		btnUsers.setIcon(new ImageIcon(JFramePrincipal.class.getResource("/es/ieslavereda/tienda/images/alta_usuario.png")));
-		toolBar.add(btnUsers);
+		getBtnUsers().setEnabled(false);
+		getBtnUsers().setIcon(new ImageIcon(JFramePrincipal.class.getResource("/es/ieslavereda/tienda/images/alta_usuario.png")));
+		toolBar.add(getBtnUsers());
 		
 		btnListClients = new JButton("Clients");
-		btnListClients.setEnabled(false);
-		btnListClients.setIcon(new ImageIcon(JFramePrincipal.class.getResource("/es/ieslavereda/tienda/images/usuarios.png")));
-		toolBar.add(btnListClients);
+		getBtnListClients().setEnabled(false);
+		getBtnListClients().setIcon(new ImageIcon(JFramePrincipal.class.getResource("/es/ieslavereda/tienda/images/usuarios.png")));
+		toolBar.add(getBtnListClients());
+		
+		btnCategories = new JButton("Categories");
+		btnCategories.setEnabled(false);
+		btnCategories.setIcon(new ImageIcon(JFramePrincipal.class.getResource("/es/ieslavereda/tienda/images/categories.png")));
+		toolBar.add(btnCategories);
 		
 		btnReport = new JButton("Report");
-		btnReport.setEnabled(false);
-		btnReport.setIcon(new ImageIcon(JFramePrincipal.class.getResource("/es/ieslavereda/tienda/images/Printer.png")));
-		toolBar.add(btnReport);
+		getBtnReport().setEnabled(false);
+		getBtnReport().setIcon(new ImageIcon(JFramePrincipal.class.getResource("/es/ieslavereda/tienda/images/Printer.png")));
+		toolBar.add(getBtnReport());
 		
 		btnSalir = new JButton("Salir");
-		btnSalir.setEnabled(false);
-		btnSalir.setIcon(new ImageIcon(JFramePrincipal.class.getResource("/es/ieslavereda/tienda/images/salir.png")));
-		toolBar.add(btnSalir);
+		getBtnSalir().setEnabled(false);
+		getBtnSalir().setIcon(new ImageIcon(JFramePrincipal.class.getResource("/es/ieslavereda/tienda/images/salir.png")));
+		toolBar.add(getBtnSalir());
 		
 		desktopPane = new JDesktopPane();
 		contentPane.add(desktopPane, BorderLayout.CENTER);
+	}
+
+	public JButton getBtnListClients() {
+		return btnListClients;
+	}
+
+	public JButton getBtnUsers() {
+		return btnUsers;
+	}
+
+	public JButton getBtnLogin() {
+		return btnLogin;
+	}
+
+	public JButton getBtnSalir() {
+		return btnSalir;
+	}
+
+	public JButton getBtnReport() {
+		return btnReport;
+	}
+
+	public JButton getBtnCategories() {
+		return btnCategories;
 	}
 }

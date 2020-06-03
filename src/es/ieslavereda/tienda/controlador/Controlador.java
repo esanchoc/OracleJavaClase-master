@@ -15,11 +15,14 @@ import javax.swing.JInternalFrame;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
+import es.ieslavereda.tienda.classes.Categories;
 import es.ieslavereda.tienda.classes.Cliente;
 import es.ieslavereda.tienda.classes.Usuario;
 import es.ieslavereda.tienda.modelo.Modelo;
 import es.ieslavereda.tienda.vista.JFramePrincipal;
+import es.ieslavereda.tienda.vista.JIFCategories;
 import es.ieslavereda.tienda.vista.JIFClientes;
+import es.ieslavereda.tienda.vista.JIFFormularioCategories;
 import es.ieslavereda.tienda.vista.JIFFormularioCliente;
 import es.ieslavereda.tienda.vista.JIFFormularioUsuario;
 import es.ieslavereda.tienda.vista.JIFLogin;
@@ -43,6 +46,8 @@ public class Controlador implements ActionListener {
 	JIFFormularioUsuario jifformulariousuario;
 	JIFClientes jifclientes;
 	JIFFormularioCliente jifformulariocliente;
+	JIFCategories jifcategories;
+	JIFFormularioCategories jifformulariocategories;
 
 	public Controlador(JFramePrincipal view, Modelo modelo) {
 		this.view = view;
@@ -55,19 +60,21 @@ public class Controlador implements ActionListener {
 		view.setTitle("Aplicacion MVC 1ºDAW");
 
 		// AÃ±adir las accionew a los botones del formulario padre
-		view.btnListClients.setActionCommand("Listar clientes");
-		view.btnUsers.setActionCommand("Abrir formulario gestion usuarios");
-		view.btnLogin.setActionCommand("Abrir formulario login");
-		view.btnSalir.setActionCommand("Cerrar sesion");
-		view.btnReport.setActionCommand("Report");
+		view.getBtnListClients().setActionCommand("Listar clientes");
+		view.getBtnUsers().setActionCommand("Abrir formulario gestion usuarios");
+		view.getBtnLogin().setActionCommand("Abrir formulario login");
+		view.getBtnCategories().setActionCommand("Abrir gestion categorias");
+		view.getBtnSalir().setActionCommand("Cerrar sesion");
+		view.getBtnReport().setActionCommand("Report");
 		
 
 		// Ponemos a escuchar las accionew del usuario
-		view.btnListClients.addActionListener(this);
-		view.btnUsers.addActionListener(this);
-		view.btnLogin.addActionListener(this);
-		view.btnSalir.addActionListener(this);
-		view.btnReport.addActionListener(this);
+		view.getBtnListClients().addActionListener(this);
+		view.getBtnUsers().addActionListener(this);
+		view.getBtnLogin().addActionListener(this);
+		view.getBtnSalir().addActionListener(this);
+		view.getBtnReport().addActionListener(this);
+		view.getBtnCategories().addActionListener(this);
 
 	}
 
@@ -87,8 +94,6 @@ public class Controlador implements ActionListener {
 		String comando = arg0.getActionCommand();
 		if (comando.equals("Listar clientes")) {
 			openJIFClientes();
-		} else if (comando.equals("Cerrar formulario listado usuarios")) {
-			
 		} else if (comando.equals("Abrir formulario gestion usuarios")) {
 			openJIFUsers();
 		} else if (comando.equals("Abrir formulario login")) {
@@ -97,8 +102,8 @@ public class Controlador implements ActionListener {
 			loguearUsuario();
 		} else if (comando.equals("Cerrar sesion")) {
 			cerrarSesion();
-		} else if (comando.equals("")) {
-			
+		} else if (comando.equals("Abrir gestion categorias")) {
+			openJIFCategories();
 		} else if (comando.equals("Actualizar Usuario")) {
 			openEditUserInternalFrame();
 		} else if (comando.equals("Report")) {
@@ -125,10 +130,183 @@ public class Controlador implements ActionListener {
 			addNewCliente();
 		} else if (comando.equals("edit new cliente")) {
 			editCliente();
+		} else if (comando.equals("Add categories")) {
+			openJIFFormularioCategoriesAdd();
+		} else if (comando.equals("Add new categories")) {
+			addNewCategories();
+		} else if (comando.equals("Edit categories")) {
+			openJIFFormularioCategoriesEdit();
+		} else if (comando.equals("Edit new categories")) {
+			editNewCategories();
+		} else if (comando.equals("Delete categories")) {
+			deleteCategories();
 		}
 
 	}
 
+
+	private void deleteCategories() {
+		
+		int [] filas = jifcategories.getTableCategories().getSelectedRows();
+		int option;
+		int id;
+		
+		if(filas.length == 0) {
+			
+			JOptionPane.showMessageDialog(jifcategories, "Debe seleccionar una o más filas para eliminar clientes", "Error", JOptionPane.ERROR_MESSAGE);
+			
+		} else {
+			
+			if (filas.length == 1) {
+				
+				option = JOptionPane.showConfirmDialog(jifclientes,"Esta seguro de eliminar la categoría seleccionada?", "Info", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+				
+			} else {
+				
+				option = JOptionPane.showConfirmDialog(jifclientes,"Esta seguro de eliminar "+ filas.length +" categorías seleccionadas?", "Info", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+			}
+			
+			if(option == JOptionPane.YES_OPTION) {
+				
+				for (int fila : filas) {
+					
+					id = Integer.parseInt(jifcategories.getTableCategories().getValueAt(fila,0).toString());
+					modelo.eliminarCategories(id);
+					
+				}
+				
+				actualizarTablaCategories();
+				
+			}
+			
+		}
+		
+	}
+
+	private void editNewCategories() {
+		
+		int option = JOptionPane.showConfirmDialog(jifformulariocategories, "Está seguro de que quiere editar esta categoría?", "Question", JOptionPane.YES_NO_OPTION);
+		
+		if(option == JOptionPane.YES_OPTION) {
+			jifformulariocategories.getCategories().setDescripcion(jifformulariocategories.getTextFieldDescripcionCategories().getText());
+			
+			if(modelo.updateCategories(jifformulariocategories.getCategories())) {
+				JOptionPane.showMessageDialog(jifformulariocategories, "Categoría modificada correctamente", "Info", JOptionPane.INFORMATION_MESSAGE);
+				actualizarTablaCategories();
+				jifformulariocategories.dispose();
+			} else {
+				JOptionPane.showMessageDialog(jifformulariocategories, "Se ha producido un error", "Error", JOptionPane.ERROR_MESSAGE);
+			}
+		}
+		
+	}
+
+	private void openJIFFormularioCategoriesEdit() {
+		
+		int option = jifcategories.getTableCategories().getSelectedRow();
+		
+		if(option == -1) {
+			JOptionPane.showMessageDialog(jifclientes, "Debe seleccionar primero una fila", "Info", JOptionPane.INFORMATION_MESSAGE);
+		} else {
+		
+			if(!estaAbierto(jifformulariocategories)) {
+				jifformulariocategories = new JIFFormularioCategories();
+				jifformulariocategories.setVisible(true);
+				
+				jifformulariocategories.getBtnAction().setText("Save");
+				jifformulariocategories.getTextFieldIDCategories().setEnabled(false);
+				
+				jifformulariocategories.getBtnAction().setActionCommand("Edit new categories");
+				jifformulariocategories.getBtnAction().addActionListener(this);
+				
+				jifformulariocategories.setCategories(modelo.obtenerCategoriesByID(Integer.parseInt(jifcategories.getTableCategories().getValueAt(option, 0).toString())));
+				
+				jifformulariocategories.getTextFieldIDCategories().setText(String.valueOf(jifformulariocategories.getCategories().getId()));
+				jifformulariocategories.getTextFieldDescripcionCategories().setText(jifformulariocategories.getCategories().getDescripcion());
+				
+				view.desktopPane.add(jifformulariocategories);
+			}
+		}
+	}
+
+	private void addNewCategories() {
+		// TODO Auto-generated method stub
+		int option = JOptionPane.showConfirmDialog(jifformulariocategories, "Está seguro de que quiere añadir esta nueva categoría?", "Question", JOptionPane.YES_NO_OPTION);
+		
+		if(option == JOptionPane.YES_OPTION) {
+			Categories c;
+			String descripcion = jifformulariocategories.getTextFieldDescripcionCategories().getText();
+			
+			c = new Categories(descripcion);
+
+			if(modelo.addCategories(c)) {
+				JOptionPane.showMessageDialog(jifformulariocategories, "Categoría añadida correctamente", "Info", JOptionPane.INFORMATION_MESSAGE);
+				actualizarTablaCategories();
+				jifformulariocategories.dispose();
+			} else {
+				JOptionPane.showMessageDialog(jifformulariocategories, "Se ha producido un error", "Error", JOptionPane.ERROR_MESSAGE);
+			}
+		}
+	}
+
+	private void openJIFFormularioCategoriesAdd() {
+		// TODO Auto-generated method stub
+		if(!estaAbierto(jifformulariocategories)) {
+			jifformulariocategories = new JIFFormularioCategories();
+			jifformulariocategories.setVisible(true);
+			
+			jifformulariocategories.getBtnAction().setText("Add");
+			jifformulariocategories.getTextFieldIDCategories().setEnabled(false);
+			
+			jifformulariocategories.getBtnAction().setActionCommand("Add new categories");
+			jifformulariocategories.getBtnAction().addActionListener(this);
+			view.desktopPane.add(jifformulariocategories);
+		}
+	}
+
+	private void openJIFCategories() {
+		
+		if(!estaAbierto(jifcategories)) {
+			jifcategories = new JIFCategories();
+			view.desktopPane.add(jifcategories);
+			jifcategories.setVisible(true);
+			
+			jifcategories.getBtnAddCategories().setActionCommand("Add categories");
+			jifcategories.getBtnEditCategories().setActionCommand("Edit categories");
+			jifcategories.getBtnDeleteCategories().setActionCommand("Delete categories");
+			
+			jifcategories.getBtnAddCategories().addActionListener(this);
+			jifcategories.getBtnEditCategories().addActionListener(this);
+			jifcategories.getBtnDeleteCategories().addActionListener(this);
+			
+			actualizarTablaCategories();
+		}
+		
+	}
+
+	private void actualizarTablaCategories() {
+		Vector<String> rowData;
+		
+		DefaultTableModel dtm = new DefaultTableModel();
+		
+		dtm.addColumn("ID");
+		dtm.addColumn("DESCRIPCIÓN");
+		
+		ArrayList<Categories> categories = modelo.obtenerCategories();
+		
+		for(Categories c : categories) {
+			rowData= new Vector<String>();
+			
+			rowData.add(String.valueOf(c.getId()));
+			rowData.add(c.getDescripcion());
+			
+			dtm.addRow(rowData);
+			
+		}
+		
+		jifcategories.getTableCategories().setModel(dtm);
+		
+	}
 
 	private void editCliente() {
 		
@@ -566,11 +744,12 @@ public class Controlador implements ActionListener {
 				JOptionPane.YES_NO_OPTION);
 
 		if (option == JOptionPane.YES_OPTION) {
-			view.btnListClients.setEnabled(false);
-			view.btnUsers.setEnabled(false);
-			view.btnLogin.setEnabled(true);
-			view.btnSalir.setEnabled(false);
-			view.btnReport.setEnabled(false);
+			view.getBtnListClients().setEnabled(false);
+			view.getBtnUsers().setEnabled(false);
+			view.getBtnLogin().setEnabled(true);
+			view.getBtnSalir().setEnabled(false);
+			view.getBtnReport().setEnabled(false);
+			view.getBtnCategories().setEnabled(false);
 
 			JInternalFrame[] internalFrames = view.desktopPane.getAllFrames();
 
@@ -586,11 +765,12 @@ public class Controlador implements ActionListener {
 
 		try {
 			if (modelo.validar(login, password)) {
-				view.btnUsers.setEnabled(true);
-				view.btnListClients.setEnabled(true);
-				view.btnLogin.setEnabled(false);
-				view.btnSalir.setEnabled(true);
-				view.btnReport.setEnabled(true);
+				view.getBtnUsers().setEnabled(true);
+				view.getBtnListClients().setEnabled(true);
+				view.getBtnLogin().setEnabled(false);
+				view.getBtnSalir().setEnabled(true);
+				view.getBtnReport().setEnabled(true);
+				view.getBtnCategories().setEnabled(true);
 				jifLogin.dispose();
 			} else {
 				JOptionPane.showMessageDialog(jifLogin, "El usuario no es correcto", "Error", JOptionPane.ERROR_MESSAGE);

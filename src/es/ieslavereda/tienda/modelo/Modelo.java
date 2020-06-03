@@ -18,6 +18,7 @@ import java.util.Map;
 
 import javax.swing.ImageIcon;
 
+import es.ieslavereda.tienda.classes.Categories;
 import es.ieslavereda.tienda.classes.Cliente;
 import es.ieslavereda.tienda.classes.Usuario;
 
@@ -405,5 +406,123 @@ public class Modelo extends Database {
 		
 		return c;
 	}
+	
+	public ArrayList<Categories> obtenerCategories(){
+		ArrayList<Categories> categories = new ArrayList<Categories>();
+		
+		String sql = "SELECT * FROM CATEGORIA";
+		
+		Categories c;
+		
+		try(Connection con = conectar();
+				PreparedStatement st = con.prepareStatement(sql);
+				ResultSet rs = st.executeQuery()){
+			
+			while(rs.next()) {
+				
+				c = new Categories(rs.getInt("ID"),rs.getString("DESCRIPCION"));
+				
+				categories.add(c);
+			}
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return categories;
+	}
 
+	public boolean addCategories(Categories c) {
+		boolean add = false;
+		String sql = "INSERT INTO CATEGORIA (DESCRIPCION) VALUES (?)";
+		int pos = 0;
+		
+		try(Connection con = conectar();
+				PreparedStatement st = con.prepareStatement(sql);){
+			
+			st.setString(++pos, c.getDescripcion());
+			
+			st.execute();
+			add = true;
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		return add;
+	}
+
+	public Categories obtenerCategoriesByID(int id) {
+		Categories c = null;
+		int pos = 0;
+		
+		String sql = "SELECT * FROM CATEGORIA WHERE ID=?";
+		
+		try(Connection con = conectar();
+				PreparedStatement st = con.prepareStatement(sql);){
+			
+			st.setInt(++pos, id);
+			
+			ResultSet rs = st.executeQuery();
+			
+			rs.next();
+			
+			c = new Categories(rs.getInt("ID"),rs.getString("DESCRIPCION"));
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return c;
+	}
+	
+	public boolean updateCategories(Categories c) {
+		boolean update = false;
+		int pos = 0;
+
+		String sql = "UPDATE CATEGORIA SET DESCRIPCION=? WHERE ID=?";
+		
+		try(Connection con = conectar();
+				PreparedStatement st = con.prepareStatement(sql);){
+			
+			st.setString(++pos, c.getDescripcion());
+			st.setInt(++pos, c.getId());
+			
+			st.execute();
+			
+			update = true;
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return update;
+	}
+
+	public boolean eliminarCategories(int id) {
+		boolean eliminado = false;
+		
+		String sql = "DELETE FROM CATEGORIA WHERE ID=?";
+		int pos = 0;
+		
+		try(Connection con = conectar();
+				PreparedStatement st = con.prepareStatement(sql);){
+			
+		st.setInt(++pos,id);	
+		
+		st.execute();
+		eliminado = true;
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return eliminado;
+	}
 }
