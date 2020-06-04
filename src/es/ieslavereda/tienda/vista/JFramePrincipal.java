@@ -31,6 +31,7 @@ public class JFramePrincipal extends JFrame {
 	private JButton btnSalir;
 	private JButton btnReport;
 	private JButton btnCategories;
+	private JButton btnIVA;
 
 	/**
 	 * Create the frame.
@@ -68,6 +69,11 @@ public class JFramePrincipal extends JFrame {
 		btnCategories.setIcon(new ImageIcon(JFramePrincipal.class.getResource("/es/ieslavereda/tienda/images/categories.png")));
 		toolBar.add(btnCategories);
 		
+		btnIVA = new JButton("IVA");
+		btnIVA.setEnabled(false);
+		btnIVA.setIcon(new ImageIcon(JFramePrincipal.class.getResource("/es/ieslavereda/tienda/images/porcentaje25x25.png")));
+		toolBar.add(btnIVA);
+		
 		btnReport = new JButton("Report");
 		getBtnReport().setEnabled(false);
 		getBtnReport().setIcon(new ImageIcon(JFramePrincipal.class.getResource("/es/ieslavereda/tienda/images/Printer.png")));
@@ -104,5 +110,9 @@ public class JFramePrincipal extends JFrame {
 
 	public JButton getBtnCategories() {
 		return btnCategories;
+	}
+
+	public JButton getBtnIVA() {
+		return btnIVA;
 	}
 }

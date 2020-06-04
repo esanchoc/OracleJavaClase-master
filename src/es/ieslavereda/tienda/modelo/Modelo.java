@@ -21,6 +21,7 @@ import javax.swing.ImageIcon;
 import es.ieslavereda.tienda.classes.Categories;
 import es.ieslavereda.tienda.classes.Cliente;
 import es.ieslavereda.tienda.classes.Usuario;
+import es.ieslavereda.tienda.classes.IVA;
 
 /**
  * Creado el 27 mar. 2019
@@ -524,5 +525,120 @@ public class Modelo extends Database {
 		}
 		
 		return eliminado;
+	}
+
+	public ArrayList<IVA> obtenerIVA() {
+		
+		ArrayList<IVA> ivas = new ArrayList<IVA>();
+		IVA iva;
+		String sql = "SELECT * FROM IVA";
+		
+		try(Connection con = conectar();
+				PreparedStatement st = con.prepareStatement(sql);
+				ResultSet rs = st.executeQuery()){
+			
+			while(rs.next()) {
+				iva = new IVA(rs.getInt("ID"),rs.getInt("PORCENTAJE"),rs.getString("DESCRIPCION"));
+				ivas.add(iva);
+			}
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return ivas;
+	}
+	
+	public boolean addIVA(IVA iva) {
+		boolean add = false;
+		
+		String sql = "INSERT INTO IVA (PORCENTAJE,DESCRIPCION) VALUES (?,?)";
+		int pos = 0;
+		
+		try(Connection con = conectar();
+				PreparedStatement st = con.prepareStatement(sql);){
+			
+			st.setInt(++pos, iva.getPorcentaje());
+			st.setString(++pos, iva.getDescripcion());
+			
+			st.execute();
+			add = true;
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return add;
+	}
+
+	public IVA obtenerIVAById(int id) {
+		IVA iva = null;
+		int pos = 0;
+		
+		String sql = "SELECT * FROM IVA WHERE ID=?";
+		
+		try(Connection con = conectar();
+				PreparedStatement st = con.prepareStatement(sql);){
+			
+			st.setInt(++pos, id);
+			
+			ResultSet rs = st.executeQuery();
+			
+			rs.next();
+			
+			iva = new IVA(rs.getInt("ID"),rs.getInt("PORCENTAJE"),rs.getString("DESCRIPCION"));
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return iva;
+	}
+
+	public boolean actualizarIVA(IVA iva) {
+		boolean actualizado = false;
+		
+		String sql = "UPDATE IVA SET PORCENTAJE=?, DESCRIPCION=? WHERE ID=?";
+		int pos = 0;		
+		
+		try(Connection con = conectar();
+				PreparedStatement st = con.prepareStatement(sql);){
+			
+			st.setInt(++pos, iva.getPorcentaje());
+			st.setString(++pos, iva.getDescripcion());
+			st.setInt(++pos, iva.getId());
+			
+			st.execute();
+			
+			actualizado = true;
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return actualizado;
+	}
+
+	public void eliminarIVAS(int id) {
+		
+		int pos = 0;
+		String sql = "DELETE FROM IVA WHERE ID=?";
+		
+		try(Connection con = conectar();
+				PreparedStatement st = con.prepareStatement(sql);){
+			
+			st.setInt(++pos,id);
+			
+			st.execute();
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 }

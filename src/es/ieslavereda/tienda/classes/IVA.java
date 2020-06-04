@@ -3,11 +3,16 @@ package es.ieslavereda.tienda.classes;
 public class IVA {
 	
 	private int id;
-	private float porcentaje;
+	private int porcentaje;
 	private String descripcion;
 	
-	public IVA(int id, float porcentaje, String descripcion) {
+	public IVA(int id, int porcentaje, String descripcion) {
 		this.id = id;
+		this.porcentaje = porcentaje;
+		this.descripcion = descripcion;
+	}
+	
+	public IVA(int porcentaje, String descripcion) {
 		this.porcentaje = porcentaje;
 		this.descripcion = descripcion;
 	}
@@ -20,11 +25,11 @@ public class IVA {
 		this.id = id;
 	}
 
-	public float getPorcentaje() {
+	public int getPorcentaje() {
 		return porcentaje;
 	}
 
-	public void setPorcentaje(float porcentaje) {
+	public void setPorcentaje(int porcentaje) {
 		this.porcentaje = porcentaje;
 	}
 
